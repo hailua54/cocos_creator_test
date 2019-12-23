@@ -8,51 +8,38 @@ module.exports =
         cc.log(str);
     },
 
-    debugClickRecursive: function(node, precessors, wpos)
+    debugClickRecursive: function(node)
     {
         if (!node.active || node.opacity == 0) return false;
-        precessors.push(node.name);
-        var isChildHit = false;
+
         for (var i = 0; i < node.childrenCount; i++)
         {
-            var hit = this.debugClickRecursive(node.children[i], precessors, wpos);
-            if (hit) isChildHit = true;
+            this.debugClickRecursive(node.children[i]);
         }
-        var isSelfHit = isChildHit;
-        if (!isSelfHit)
-        {
-            var lpos = node.parent.convertToNodeSpaceAR(wpos);
-            var bd = node.getBoundingBox();
-            isSelfHit = bd.contains(lpos);
 
-            if (isSelfHit)
-            {
-                var str = node.name;
-                var p = node.parent;
-                while (p)
-                {
-                    str = p.name + " >> " + str;
-                    p = p.parent;
-                }
+        node.on(cc.Node.EventType.TOUCH_START, (e) => {
+            if (!this.isCtrlKey) return;
+            var currentTarget = e.currentTarget;
+            e.stopPropagation();
 
-                this.trace('debug click: ' + str);
+            var str = currentTarget.name;
+            var p = currentTarget.parent;
+            while (p) {
+                str = p.name + " >> " + str;
+                p = p.parent;
             }
-        }
 
-        precessors.pop();
-        return isSelfHit;
+            this.trace('debug click: ' + str);
+
+        }, this);
     },
 
     setupDebugClick: function(node)
     {
         if (this.isDebugClickSet) return;
         this.isDebugClickSet = true;
-        node.on(cc.Node.EventType.TOUCH_START, (e) => {
-            if (!this.isCtrlKey) return;
-            var currentTarget = e.currentTarget;
-            var pos = e.getStartLocation();
-            this.debugClickRecursive(currentTarget, [], pos);
-        }, this, true);
+
+        this.debugClickRecursive(node);
 
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, (e)=>{
             switch(e.keyCode) {

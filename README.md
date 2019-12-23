@@ -1,1 +1,2 @@
-# cocos_creator_test
+# hello-world
+Hello world new project template.
