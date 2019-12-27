@@ -20,7 +20,7 @@ module.exports =
         node.on(cc.Node.EventType.TOUCH_START, (e) => {
             if (!this.isCtrlKey) return;
             var currentTarget = e.currentTarget;
-            e.stopPropagation();
+            //e.stopPropagation();
 
             var str = currentTarget.name;
             var p = currentTarget.parent;
