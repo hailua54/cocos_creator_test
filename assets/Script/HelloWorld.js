@@ -83,7 +83,9 @@ cc.Class({
 
     onCocosClick(e)
     {
-        cc.log('cocos click.');
+        cc.log('cocos click. ');
+        if (cc.sys.isBrowser) cc.log('web --------------');
+        else cc.log('native --------------');
         //var anim = this.coin.getComponent(cc.Animation);
         //var animState = anim.play('coin_anim');
         //var animState = anim.play('coin_anim_slow');
@@ -96,6 +98,7 @@ cc.Class({
         var particleCoin = view.getChildByName('ParticleCoin');
         //particleCoin.active = !particleCoin.active;
         particleCoin.opacity = particleCoin.opacity ? 0 : 255;
+        /*
         var way = 1;
         if (way == 1)
         {
@@ -112,8 +115,22 @@ cc.Class({
         sp.y = Math.random()*300;
         this.node.addChild(sp);
 
+        */
         var player = this.node.getComponent('SoundPlayer');
-        var r = cc.audioEngine.play(player.click);
+        cc.audioEngine.play(player.click);
+        cc.audioEngine.playMusic(player.bgMusic, true);
+        
+    },
+
+    onStopEffect()
+    {
+        cc.audioEngine.stopAllEffects();
+    },
+
+    onToggleMusic()
+    {
+        if (cc.audioEngine.isMusicPlaying()) cc.audioEngine.pauseMusic();
+        else cc.audioEngine.resumeMusic();
     },
 
     onLoadSceneClick(e)
